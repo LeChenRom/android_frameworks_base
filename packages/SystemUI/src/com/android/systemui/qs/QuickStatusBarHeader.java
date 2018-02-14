@@ -187,6 +187,7 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         mClockView.setOnClickListener(this);
         mDateView = findViewById(R.id.date);
         mDateView.setOnClickListener(this);
+        battery.setIsQuickSbHeaderOrKeyguard(true);
     }
 
     private void updateStatusText() {
