@@ -138,6 +138,8 @@ public class QuickStatusBarHeader extends RelativeLayout implements
      */
     private final Runnable mAutoFadeOutTooltipRunnable = () -> hideLongPressTooltip(false);
 
+    private BatteryMeterView mBatteryView;
+
     public QuickStatusBarHeader(Context context, AttributeSet attrs) {
         super(context, attrs);
         mAlarmController = Dependency.get(NextAlarmController.class);
@@ -180,14 +182,14 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         // Set the correct tint for the status icons so they contrast
         mIconManager.setTint(fillColor);
 
-        mBatteryMeterView = findViewById(R.id.battery);
+        mBatteryView = findViewById(R.id.battery);
         mBatteryMeterView.setForceShowPercent(true);
         mBatteryMeterView.setOnClickListener(this);
         mClockView = findViewById(R.id.clock);
         mClockView.setOnClickListener(this);
         mDateView = findViewById(R.id.date);
         mDateView.setOnClickListener(this);
-        battery.setIsQuickSbHeaderOrKeyguard(true);
+        mBatteryView.setIsQuickSbHeaderOrKeyguard(true);
     }
 
     private void updateStatusText() {
@@ -240,6 +242,12 @@ public class QuickStatusBarHeader extends RelativeLayout implements
 
         return isOriginalVisible != alarmVisible ||
                 !Objects.equals(originalAlarmText, mNextAlarmTextView.getText());
+    }
+
+    public void updateBatterySettings() {
+        if (mBatteryView != null) {
+            mBatteryView.updateSettings(true);
+        }
     }
 
     private void applyDarkness(int id, Rect tintArea, float intensity, int color) {
