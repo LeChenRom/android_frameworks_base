@@ -283,12 +283,13 @@ public class BatteryMeterView extends LinearLayout implements
     private void updateShowPercent() {
         final boolean showing = mBatteryPercentView != null;
         if (forcePercentageQsHeader()
-                || ((mShowPercentText == 1) || mForceShowPercent)) {
+                || (mStyle != BatteryMeterDrawableBase.BATTERY_STYLE_HIDDEN && ((mShowPercentText == 1) || mForceShowPercent))) {
             if (!showing) {
                 mBatteryPercentView = loadPercentView();
                 if (mTextColor != 0) mBatteryPercentView.setTextColor(mTextColor);
                 updatePercentText();
                 addView(mBatteryPercentView,
+                        0,
                         new ViewGroup.LayoutParams(
                                 LayoutParams.WRAP_CONTENT,
                                 LayoutParams.MATCH_PARENT));
