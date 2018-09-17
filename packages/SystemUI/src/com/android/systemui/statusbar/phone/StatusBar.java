@@ -5033,6 +5033,9 @@ public class StatusBar extends SystemUI implements DemoMode,
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
+	    super.onChange(selfChange, uri);
+            update();
+
             if (uri.equals(Settings.System.getUriFor(Settings.System.QS_ROWS_PORTRAIT)) ||
                     uri.equals(Settings.System.getUriFor(Settings.System.QS_ROWS_LANDSCAPE)) ||
                     uri.equals(Settings.System.getUriFor(Settings.System.QS_COLUMNS_PORTRAIT)) ||
@@ -5055,7 +5058,6 @@ public class StatusBar extends SystemUI implements DemoMode,
                 Settings.System.DOUBLE_TAP_SLEEP_GESTURE))) {
                 setStatusBarWindowViewOptions();
             }
-            update();
         }
 
          public void update() {
