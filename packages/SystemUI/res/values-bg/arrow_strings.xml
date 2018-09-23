@@ -35,9 +35,16 @@
   <string name="accessibility_quick_settings_sync_changed_on">Синхронизацията е включена</string>
   <!-- Sound QS Tile -->
   <string name="quick_settings_sound_label">Звук</string>
-  <string name="quick_settings_sound_ring">Звук</string>
+  <string name="quick_settings_sound_ring">Звън</string>
   <string name="quick_settings_sound_vibrate">Вибрация</string>
   <string name="quick_settings_sound_dnd">Режим \"Не безпокой\"</string>
+  <!-- HW Keys Tile -->
+  <string name="accessibility_quick_settings_hwkeys_on">Хардуерни бутони вкл</string>
+  <string name="accessibility_quick_settings_hwkeys_off">Хардуерни бутони изк</string>
+  <string name="quick_settings_hwkeys_label">Хардуерни бутони</string>
+  <!-- Screenshot QS tile -->
+  <string name="quick_settings_screenshot_label">Екранна снимка</string>
+  <string name="quick_settings_region_screenshot_label">Частична екранна снимка</string>
   <!-- Advanced powermenu -->
   <string name="global_action_restart_system">Рестартиране</string>
   <string name="global_action_restart_advanced">Разширено рестартиране</string>
@@ -86,15 +93,25 @@
   <string name="keyguard_indication_turbo_power_time">TurboPower е свързан (<xliff:g id="charging_time_left">%s</xliff:g> до пълно зареждане)</string>
   <string name="keyguard_plugged_in_turbo_power_charging">TurboPower е свързан</string>
   <!-- Omni Weather -->
-  <string name="omnijaws_service_error">Error</string>
-  <string name="omnijaws_service_unkown">No weather data</string>
-  <string name="omnijaws_service_error_long">Error loading weather data</string>
-  <string name="omnijaws_service_disabled">Service is disabled</string>
-  <string name="omnijaws_detail_header">Weather</string>
-  <string name="omnijaws_label_default">Weather</string>
-  <string name="omnijaws_current_text">Now</string>
-  <string name="omnijaws_package_not_available">OmniJaws not available</string>
-  <string name="omnijaws_service_last_update">Last update:</string>
+  <string name="omnijaws_service_error">Грешка</string>
+  <string name="omnijaws_service_unkown">Няма информация за времето</string>
+  <string name="omnijaws_service_error_long">Грешка при зареждане на данни за времето</string>
+  <string name="omnijaws_service_disabled">Услугата е забранена</string>
+  <string name="omnijaws_detail_header">Метеорологични условия</string>
+  <string name="omnijaws_label_default">Метеорологични условия</string>
+  <string name="omnijaws_current_text">Сега</string>
+  <string name="omnijaws_package_not_available">OmniJaws не е наличен</string>
+  <string name="omnijaws_service_last_update">Последно обновяване:</string>
   <!-- Weather string format in expanded statusbar header -->
-  <string name="status_bar_weather_format"><xliff:g id="temp">%1$s</xliff:g></string>
+  <string name="status_bar_weather_format"><xliff:g id="temp">%1$s е </xliff:g></string>
+  <!-- Caffeine QS Tile -->
+  <string name="quick_settings_caffeine_label">Кофеин</string>
+  <string name="accessibility_quick_settings_caffeine_off">Кофеин изключен</string>
+  <string name="accessibility_quick_settings_caffeine_on">Кофеин включен</string>
+  <!-- Heads Up QS Tile -->
+  <string name="quick_settings_heads_up_label">Изскачащи известия</string>
+  <string name="accessibility_quick_settings_heads_up_off">Изскачащи известия изключени.</string>
+  <string name="accessibility_quick_settings_heads_up_on">Изскачащи известия включени.</string>
+  <string name="accessibility_quick_settings_heads_up_changed_off">Изскачащите известия са изключени.</string>
+  <string name="accessibility_quick_settings_heads_up_changed_on">Изскачащите известия са включени.</string>
 </resources>

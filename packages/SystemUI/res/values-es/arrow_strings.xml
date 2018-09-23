@@ -37,7 +37,14 @@
   <string name="quick_settings_sound_label">Sonido</string>
   <string name="quick_settings_sound_ring">Tono de llamada</string>
   <string name="quick_settings_sound_vibrate">Vibrar</string>
-  <string name="quick_settings_sound_dnd">Modo no molestar</string>
+  <string name="quick_settings_sound_dnd">No molestar</string>
+  <!-- HW Keys Tile -->
+  <string name="accessibility_quick_settings_hwkeys_on">Teclas físicas encendidas</string>
+  <string name="accessibility_quick_settings_hwkeys_off">Teclas físicas apagadas</string>
+  <string name="quick_settings_hwkeys_label">Teclas físicas</string>
+  <!-- Screenshot QS tile -->
+  <string name="quick_settings_screenshot_label">Captura de pantalla</string>
+  <string name="quick_settings_region_screenshot_label">Captura de pantalla parcial</string>
   <!-- Advanced powermenu -->
   <string name="global_action_restart_system">Reiniciar</string>
   <string name="global_action_restart_advanced">Reinicio avanzado</string>
@@ -53,7 +60,7 @@
   <!-- The text for the button in the notification window-shade that clears
          all of the currently visible notifications. [CHAR LIMIT=10]-->
   <string name="clear_recents">Cerrar recientes</string>
-  <string name="lockscreen_default">Predeterminado</string>
+  <string name="lockscreen_default">Por defecto</string>
   <string name="lockscreen_hidden">Ninguno</string>
   <!-- Shows when people have clicked on the custom lockscreen shortcut [CHAR LIMIT=60] -->
   <string name="custom_hint">Desliza desde el icono para abrir</string>
@@ -64,9 +71,9 @@
   <string name="no_home_message">Se necesita un botón de inicio para poder navegar por el dispositivo. Añádelo antes de guardar.</string>
   <string name="clipboard_description">Con este botón puedes arrastrar los elementos directamente al portapapeles y, si está presente, fuera de él.</string>
   <string name="keycode_description">Con los botones del código de teclado puedes añadir teclas a la barra de navegación que, al pulsarlas, emulan la tecla seleccionada. Primero debes seleccionar la tecla para el botón y, a continuación, la imagen que se va a mostrar en él.</string>
-  <string name="start">Inicio</string>
-  <string name="center">Centrar</string>
-  <string name="end">Fin</string>
+  <string name="start">Start</string>
+  <string name="center">Center</string>
+  <string name="end">End</string>
   <string name="space">Separador</string>
   <string name="menu_ime">Menú/Cambio de teclado</string>
   <string name="select_button">Selecciona un botón para añadirlo</string>
@@ -87,14 +94,24 @@
   <string name="keyguard_plugged_in_turbo_power_charging">Carga rápida conectada</string>
   <!-- Omni Weather -->
   <string name="omnijaws_service_error">Error</string>
-  <string name="omnijaws_service_unkown">No weather data</string>
-  <string name="omnijaws_service_error_long">Error loading weather data</string>
-  <string name="omnijaws_service_disabled">Service is disabled</string>
-  <string name="omnijaws_detail_header">Weather</string>
-  <string name="omnijaws_label_default">Weather</string>
-  <string name="omnijaws_current_text">Now</string>
-  <string name="omnijaws_package_not_available">OmniJaws not available</string>
-  <string name="omnijaws_service_last_update">Last update:</string>
+  <string name="omnijaws_service_unkown">No hay datos metereológicos</string>
+  <string name="omnijaws_service_error_long">Error al cargar datos meteorológicos</string>
+  <string name="omnijaws_service_disabled">Servicio deshabilitado</string>
+  <string name="omnijaws_detail_header">Tiempo metereològico</string>
+  <string name="omnijaws_label_default">Tiempo metereològico</string>
+  <string name="omnijaws_current_text">Ahora</string>
+  <string name="omnijaws_package_not_available">OmniJaws no está disponible</string>
+  <string name="omnijaws_service_last_update">Última actualización:</string>
   <!-- Weather string format in expanded statusbar header -->
   <string name="status_bar_weather_format"><xliff:g id="temp">%1$s</xliff:g></string>
+  <!-- Caffeine QS Tile -->
+  <string name="quick_settings_caffeine_label">Cafeína</string>
+  <string name="accessibility_quick_settings_caffeine_off">Modo cafeína desactivada</string>
+  <string name="accessibility_quick_settings_caffeine_on">Modo cafeína activado</string>
+  <!-- Heads Up QS Tile -->
+  <string name="quick_settings_heads_up_label">Notificaciones flotantes</string>
+  <string name="accessibility_quick_settings_heads_up_off">Notificaciones flotantes desactivadas.</string>
+  <string name="accessibility_quick_settings_heads_up_on">Notificaciones flotantes activadas.</string>
+  <string name="accessibility_quick_settings_heads_up_changed_off">Notificaciones flotantes están desactivadas.</string>
+  <string name="accessibility_quick_settings_heads_up_changed_on">Notificaciones flotantes están activadas.</string>
 </resources>

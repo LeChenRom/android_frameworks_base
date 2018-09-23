@@ -38,6 +38,13 @@
   <string name="quick_settings_sound_ring">Vyzvánění</string>
   <string name="quick_settings_sound_vibrate">Vibrace</string>
   <string name="quick_settings_sound_dnd">Nerušit</string>
+  <!-- HW Keys Tile -->
+  <string name="accessibility_quick_settings_hwkeys_on">HW tlačítka zapnuta</string>
+  <string name="accessibility_quick_settings_hwkeys_off">HW tlačítka vypnuta</string>
+  <string name="quick_settings_hwkeys_label">HW tlačítka</string>
+  <!-- Screenshot QS tile -->
+  <string name="quick_settings_screenshot_label">Snímek obrazovky</string>
+  <string name="quick_settings_region_screenshot_label">Částečný snímek obrazovky</string>
   <!-- Advanced powermenu -->
   <string name="global_action_restart_system">Restartovat</string>
   <string name="global_action_restart_advanced">Rozšířený restart</string>
@@ -86,15 +93,25 @@
   <string name="keyguard_indication_turbo_power_time">TurboPower je připojen (zbývá <xliff:g id="charging_time_left">%s</xliff:g> do plna)</string>
   <string name="keyguard_plugged_in_turbo_power_charging">TurboPower je připojen</string>
   <!-- Omni Weather -->
-  <string name="omnijaws_service_error">Error</string>
-  <string name="omnijaws_service_unkown">No weather data</string>
-  <string name="omnijaws_service_error_long">Error loading weather data</string>
-  <string name="omnijaws_service_disabled">Service is disabled</string>
-  <string name="omnijaws_detail_header">Weather</string>
-  <string name="omnijaws_label_default">Weather</string>
-  <string name="omnijaws_current_text">Now</string>
-  <string name="omnijaws_package_not_available">OmniJaws not available</string>
-  <string name="omnijaws_service_last_update">Last update:</string>
+  <string name="omnijaws_service_error">Chyba</string>
+  <string name="omnijaws_service_unkown">Žádné údaje o počasí</string>
+  <string name="omnijaws_service_error_long">Chyba při načítání údajů o počasí</string>
+  <string name="omnijaws_service_disabled">Služba je zakázána</string>
+  <string name="omnijaws_detail_header">Počasí</string>
+  <string name="omnijaws_label_default">Počasí</string>
+  <string name="omnijaws_current_text">Nyní</string>
+  <string name="omnijaws_package_not_available">OmniJaws není k dispozici</string>
+  <string name="omnijaws_service_last_update">Poslední aktualizace:</string>
   <!-- Weather string format in expanded statusbar header -->
   <string name="status_bar_weather_format"><xliff:g id="temp">%1$s</xliff:g></string>
+  <!-- Caffeine QS Tile -->
+  <string name="quick_settings_caffeine_label">Caffeine</string>
+  <string name="accessibility_quick_settings_caffeine_off">Caffeine vyp.</string>
+  <string name="accessibility_quick_settings_caffeine_on">Caffeine zap.</string>
+  <!-- Heads Up QS Tile -->
+  <string name="quick_settings_heads_up_label">Plovoucí oznámení</string>
+  <string name="accessibility_quick_settings_heads_up_off">Plovoucí oznámení vyp.</string>
+  <string name="accessibility_quick_settings_heads_up_on">Plovoucí oznámení zap.</string>
+  <string name="accessibility_quick_settings_heads_up_changed_off">Plovoucí oznámení bylo vypnuto.</string>
+  <string name="accessibility_quick_settings_heads_up_changed_on">Plovoucí oznámení bylo zapnuto.</string>
 </resources>
