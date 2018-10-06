@@ -1952,6 +1952,16 @@ public class ActivityManagerService extends IActivityManager.Stub
     CompatModeDialog mCompatModeDialog;
     long mLastMemUsageReportTime = 0;
 
+    // Min aging threshold in milliseconds to consider a B-service
+    int mMinBServiceAgingTime =
+            SystemProperties.getInt("ro.vendor.qti.sys.fw.bservice_age", 5000);
+    // Threshold for B-services when in memory pressure
+    int mBServiceAppThreshold =
+            SystemProperties.getInt("ro.vendor.qti.sys.fw.bservice_limit", 5);
+    // Enable B-service aging propagation on memory pressure.
+    boolean mEnableBServicePropagation =
+            SystemProperties.getBoolean("ro.vendor.qti.sys.fw.bservice_enable", false);
+
     /**
      * Flag whether the current user is a "monkey", i.e. whether
      * the UI is driven by a UI automation tool.
@@ -9659,10 +9669,17 @@ public class ActivityManagerService extends IActivityManager.Stub
             }
         }
 
-        // If we're extending a persistable grant, then we always need to create
-        // the grant data structure so that take/release APIs work
+        // Figure out the value returned when access is allowed
+        final int allowedResult;
         if ((modeFlags & Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION) != 0) {
-            return targetUid;
+            // If we're extending a persistable grant, then we need to return
+            // "targetUid" so that we always create a grant data structure to
+            // support take/release APIs
+            allowedResult = targetUid;
+        } else {
+            // Otherwise, we can return "-1" to indicate that no grant data
+            // structures need to be created
+            allowedResult = -1;
         }
 
         if (targetUid >= 0) {
@@ -9671,7 +9688,7 @@ public class ActivityManagerService extends IActivityManager.Stub
                 // No need to grant the target this permission.
                 if (DEBUG_URI_PERMISSION) Slog.v(TAG_URI_PERMISSION,
                         "Target " + targetPkg + " already has full permission to " + grantUri);
-                return -1;
+                return allowedResult;
             }
         } else {
             // First...  there is no target package, so can anyone access it?
@@ -9706,7 +9723,7 @@ public class ActivityManagerService extends IActivityManager.Stub
                 }
             }
             if (allowed) {
-                return -1;
+                return allowedResult;
             }
         }
 
@@ -23107,6 +23124,7 @@ public class ActivityManagerService extends IActivityManager.Stub
                 // The process is being computed, so there is a cycle. We cannot
                 // rely on this process's state.
                 app.containsCycle = true;
+
                 return false;
             }
         }
@@ -23131,6 +23149,7 @@ public class ActivityManagerService extends IActivityManager.Stub
         final int logUid = mCurOomAdjUid;
 
         int prevAppAdj = app.curAdj;
+        int prevProcState = app.curProcState;
 
         if (app.maxAdj <= ProcessList.FOREGROUND_APP_ADJ) {
             // The max adjustment doesn't allow this app to be anything
@@ -23609,11 +23628,16 @@ public class ActivityManagerService extends IActivityManager.Stub
                         ProcessRecord client = cr.binding.client;
                         computeOomAdjLocked(client, cachedAdj, TOP_APP, doingAll, now);
                         if (client.containsCycle) {
-                            // We've detected a cycle. We should ignore this connection and allow
-                            // this process to retry computeOomAdjLocked later in case a later-checked
-                            // connection from a client  would raise its priority legitimately.
+                            // We've detected a cycle. We should retry computeOomAdjLocked later in
+                            // case a later-checked connection from a client  would raise its
+                            // priority legitimately.
                             app.containsCycle = true;
-                            continue;
+                            // If the client has not been completely evaluated, skip using its
+                            // priority. Else use the conservative value for now and look for a
+                            // better state in the next iteration.
+                            if (client.completedAdjSeq < mAdjSeq) {
+                                continue;
+                            }
                         }
                         int clientAdj = client.curRawAdj;
                         int clientProcState = client.curProcState;
@@ -23836,11 +23860,16 @@ public class ActivityManagerService extends IActivityManager.Stub
                 }
                 computeOomAdjLocked(client, cachedAdj, TOP_APP, doingAll, now);
                 if (client.containsCycle) {
-                    // We've detected a cycle. We should ignore this connection and allow
-                    // this process to retry computeOomAdjLocked later in case a later-checked
-                    // connection from a client  would raise its priority legitimately.
+                    // We've detected a cycle. We should retry computeOomAdjLocked later in
+                    // case a later-checked connection from a client  would raise its
+                    // priority legitimately.
                     app.containsCycle = true;
-                    continue;
+                    // If the client has not been completely evaluated, skip using its
+                    // priority. Else use the conservative value for now and look for a
+                    // better state in the next iteration.
+                    if (client.completedAdjSeq < mAdjSeq) {
+                        continue;
+                    }
                 }
                 int clientAdj = client.curRawAdj;
                 int clientProcState = client.curProcState;
@@ -24072,8 +24101,8 @@ public class ActivityManagerService extends IActivityManager.Stub
         app.foregroundActivities = foregroundActivities;
         app.completedAdjSeq = mAdjSeq;
 
-        // if curAdj is less than prevAppAdj, then this process was promoted
-        return app.curAdj < prevAppAdj;
+        // if curAdj or curProcState improved, then this process was promoted
+        return app.curAdj < prevAppAdj || app.curProcState < prevProcState;
     }
 
     /**
@@ -25047,6 +25076,9 @@ public class ActivityManagerService extends IActivityManager.Stub
         int nextCachedAdj = curCachedAdj+1;
         int curEmptyAdj = ProcessList.CACHED_APP_MIN_ADJ;
         int nextEmptyAdj = curEmptyAdj+2;
+        ProcessRecord selectedAppRecord = null;
+        long serviceLastActivity = 0;
+        int numBServices = 0;
 
         boolean retryCycles = false;
 
@@ -25057,6 +25089,34 @@ public class ActivityManagerService extends IActivityManager.Stub
         }
         for (int i=N-1; i>=0; i--) {
             ProcessRecord app = mLruProcesses.get(i);
+            if (mEnableBServicePropagation && app.serviceb
+                    && (app.curAdj == ProcessList.SERVICE_B_ADJ)) {
+                numBServices++;
+                for (int s = app.services.size() - 1; s >= 0; s--) {
+                    ServiceRecord sr = app.services.valueAt(s);
+                    if (DEBUG_OOM_ADJ) Slog.d(TAG,"app.processName = " + app.processName
+                            + " serviceb = " + app.serviceb + " s = " + s + " sr.lastActivity = "
+                            + sr.lastActivity + " packageName = " + sr.packageName
+                            + " processName = " + sr.processName);
+                    if (SystemClock.uptimeMillis() - sr.lastActivity
+                            < mMinBServiceAgingTime) {
+                        if (DEBUG_OOM_ADJ) {
+                            Slog.d(TAG,"Not aged enough!!!");
+                        }
+                        continue;
+                    }
+                    if (serviceLastActivity == 0) {
+                        serviceLastActivity = sr.lastActivity;
+                        selectedAppRecord = app;
+                    } else if (sr.lastActivity < serviceLastActivity) {
+                        serviceLastActivity = sr.lastActivity;
+                        selectedAppRecord = app;
+                    }
+                }
+            }
+            if (DEBUG_OOM_ADJ && selectedAppRecord != null) Slog.d(TAG,
+                    "Identified app.processName = " + selectedAppRecord.processName
+                    + " app.pid = " + selectedAppRecord.pid);
             if (!app.killedByAm && app.thread != null) {
                 app.procStateChanged = false;
                 computeOomAdjLocked(app, ProcessList.UNKNOWN_ADJ, TOP_APP, true, now);
@@ -25126,7 +25186,7 @@ public class ActivityManagerService extends IActivityManager.Stub
         // - Continue retrying until no process was promoted.
         // - Iterate from least important to most important.
         int cycleCount = 0;
-        while (retryCycles) {
+        while (retryCycles && cycleCount < 10) {
             cycleCount++;
             retryCycles = false;
 
@@ -25141,12 +25201,14 @@ public class ActivityManagerService extends IActivityManager.Stub
             for (int i=0; i<N; i++) {
                 ProcessRecord app = mLruProcesses.get(i);
                 if (!app.killedByAm && app.thread != null && app.containsCycle == true) {
+
                     if (computeOomAdjLocked(app, ProcessList.UNKNOWN_ADJ, TOP_APP, true, now)) {
                         retryCycles = true;
                     }
                 }
             }
         }
+
         for (int i=N-1; i>=0; i--) {
             ProcessRecord app = mLruProcesses.get(i);
             if (!app.killedByAm && app.thread != null) {
@@ -25208,6 +25270,14 @@ public class ActivityManagerService extends IActivityManager.Stub
                     numTrimming++;
                 }
             }
+        }
+        if ((numBServices > mBServiceAppThreshold) && (true == mAllowLowerMemLevel)
+                && (selectedAppRecord != null)) {
+            ProcessList.setOomAdj(selectedAppRecord.pid, selectedAppRecord.info.uid,
+                    ProcessList.CACHED_APP_MAX_ADJ);
+            selectedAppRecord.setAdj = selectedAppRecord.curAdj;
+            if (DEBUG_OOM_ADJ) Slog.d(TAG,"app.processName = " + selectedAppRecord.processName
+                        + " app.pid = " + selectedAppRecord.pid + " is moved to higher adj");
         }
 
         incrementProcStateSeqAndNotifyAppsLocked();
