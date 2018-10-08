@@ -140,12 +140,16 @@ public class StatusBarWeather extends TextView implements
 
         if (onChange && mStatusBarWeatherEnabled == 0) {
             // Disable OmniJaws if tile isn't used either
-            String[] tiles = Settings.Secure.getStringForUser(resolver,
+            try {
+            	String[] tiles = Settings.Secure.getStringForUser(resolver,
                     Settings.Secure.QS_TILES, UserHandle.USER_CURRENT).split(",");
-            boolean weatherTileEnabled = Arrays.asList(tiles).contains("weather");
-            Log.d(TAG, "Weather tile enabled " + weatherTileEnabled);
-            if (!weatherTileEnabled) {
-                mWeatherClient.setOmniJawsEnabled(false);
+            	boolean weatherTileEnabled = Arrays.asList(tiles).contains("weather");
+                Log.d(TAG, "Weather tile enabled " + weatherTileEnabled);
+                if (!weatherTileEnabled) {
+                    mWeatherClient.setOmniJawsEnabled(false);
+                   }
+            } catch(Exception e) {
+                // Do nothing
             }
         }
     }
