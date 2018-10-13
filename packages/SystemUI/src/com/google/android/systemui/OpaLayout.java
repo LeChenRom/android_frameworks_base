@@ -6,11 +6,17 @@ import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.Resources;
+import android.content.ContentResolver;
+import android.database.ContentObserver;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.PorterDuff;
+import android.net.Uri;
+import android.os.Handler;
 import android.os.SystemClock;
+import android.os.UserHandle;
 import android.os.UserManager;
+import android.provider.Settings;
 import android.util.ArraySet;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -98,6 +104,26 @@ public class OpaLayout extends FrameLayout implements ButtonInterface, Tunable {
     private final Interpolator mDotsFullSizeInterpolator;
     private final Interpolator mFastOutSlowInInterpolator;
     private final Interpolator mHomeDisappearInterpolator;
+    private SettingsObserver mSettingsObserver;
+
+    protected class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+           ContentResolver resolver = mContext.getContentResolver();
+           resolver.registerContentObserver(Settings.System.getUriFor(
+                  Settings.System.PIXEL_NAV_ANIMATION),
+                  false, this, UserHandle.USER_CURRENT);
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+           super.onChange(selfChange, uri);
+           setOpaEnabled(true);
+        }
+    }
 
     private OverviewProxyService mOverviewProxyService;
 
@@ -130,6 +156,10 @@ public class OpaLayout extends FrameLayout implements ButtonInterface, Tunable {
         mAnimationState = OpaLayout.ANIMATION_STATE_NONE;
         mCurrentAnimators = new ArraySet<Animator>();
         mOverviewProxyService = Dependency.get(OverviewProxyService.class);
+        if (mSettingsObserver == null) {
+            mSettingsObserver = new SettingsObserver(new Handler());
+        }
+        mSettingsObserver.observe();
     }
 
     public OpaLayout(Context context, AttributeSet attrs) {
@@ -161,6 +191,10 @@ public class OpaLayout extends FrameLayout implements ButtonInterface, Tunable {
         mAnimationState = OpaLayout.ANIMATION_STATE_NONE;
         mCurrentAnimators = new ArraySet<Animator>();
         mOverviewProxyService = Dependency.get(OverviewProxyService.class);
+        if (mSettingsObserver == null) {
+            mSettingsObserver = new SettingsObserver(new Handler());
+        }
+        mSettingsObserver.observe();
     }
 
     public OpaLayout(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -192,8 +226,11 @@ public class OpaLayout extends FrameLayout implements ButtonInterface, Tunable {
         mAnimationState = OpaLayout.ANIMATION_STATE_NONE;
         mCurrentAnimators = new ArraySet<Animator>();
         mOverviewProxyService = Dependency.get(OverviewProxyService.class);
+	if (mSettingsObserver == null) {
+            mSettingsObserver = new SettingsObserver(new Handler());
+        }
+	mSettingsObserver.observe();
     }
-
 
     @Override
     public void onTuningChanged(String key, String newValue) {
@@ -230,6 +267,10 @@ public class OpaLayout extends FrameLayout implements ButtonInterface, Tunable {
         };
         mAnimationState = OpaLayout.ANIMATION_STATE_NONE;
         mCurrentAnimators = new ArraySet<Animator>();
+        if (mSettingsObserver == null) {
+            mSettingsObserver = new SettingsObserver(new Handler());
+        }
+        mSettingsObserver.observe();
     }
 
     private void startAll(ArraySet<Animator> animators) {
@@ -613,14 +654,17 @@ public class OpaLayout extends FrameLayout implements ButtonInterface, Tunable {
     }
 
     public void setOpaEnabled(boolean enabled) {
-        final boolean b2 = enabled || UserManager.isDeviceInDemoMode(getContext());
-        if (!b2) {
+        final boolean opaToggle = Settings.System.getIntForUser(this.getContext().getContentResolver(),
+            Settings.System.PIXEL_NAV_ANIMATION, 1, UserHandle.USER_CURRENT) == 1;
+        final boolean b2 = (enabled || UserManager.isDeviceInDemoMode(getContext())) && opaToggle;
+        mOpaEnabled = b2;
+        if (b2) {
+            showAllOpa();
+        } else {
             hideAllOpa();
-            mOpaEnabled = false;
-        }else{
-            mOpaEnabled = true;
         }
     }
+
 
     private void hideAllOpa(){
         fadeOutButton(mBlue);
