@@ -4606,6 +4606,13 @@ public final class Settings {
         public static final String SHAKE_CLEAN_NOTIFICATION = "shake_clean_notification";
 
         /**
+         * Clean recent by shake
+         *
+         * @hide
+         */
+        public static final String SHAKE_CLEAN_RECENT = "shake_clean_recent";
+
+        /**
          * Whether to show Brightness Icon On Brightness Slider
          * @hide
          */
@@ -4632,13 +4639,6 @@ public final class Settings {
 
         /** @hide */
         private static final Validator LOCKSCREEN_WEATHER_SHOW_CITY_VALIDATOR = BOOLEAN_VALIDATOR;
-
-        /**
-         * Clean recent by shake
-         *
-         * @hide
-         */
-        public static final String SHAKE_CLEAN_RECENT = "shake_clean_recent";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings

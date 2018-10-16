@@ -27,7 +27,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
-import android.os.RemoteException;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.os.storage.StorageManager;
@@ -451,10 +450,6 @@ class LockSettingsStorage {
             return (byte) size;
         }
         return LockPatternUtils.PATTERN_SIZE_DEFAULT;
-    }
-
-    public boolean isDefaultSize(int userId) {
-        return getLockPatternSize(userId) == LockPatternUtils.PATTERN_SIZE_DEFAULT;
     }
 
     @VisibleForTesting
